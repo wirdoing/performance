@@ -1,0 +1,42 @@
+config:
+  target: "https://api.todoist.com/rest/v1"
+  phases:
+    - duration: 1
+      arrivalRate: 1
+      name: "Phase 1"
+  defaults: 
+    headers:
+      Authorization: Bearer 5e441ea114d017d47dfe76bae59389e891a0d30a
+      content-type: application/json
+scenarios:
+  - flow:
+      - post:
+          url: "/projects"
+          json:
+            name: test
+          capture: 
+            json: "$.id"
+            as: "id"
+      - log: "Current id is {{ ProjectId }}"
+      - post: 
+          url: "/tasks"
+          json:
+            content: buyacar
+          capture:
+            json: "$.id"
+            as: "TaskId"
+      - log: "Current task is {{ TaskId }}"
+      - get:
+          url: "/tasks"
+      - get:
+          url: "/tasks/{{TaskId}}"
+      - post:
+          url: "/tasks/{{TaskId}}"
+          json:
+            content: contenido
+      - post:
+          url: "/tasks/{{TaskId}}/close"
+      - post:
+          url: "/tasks/{{TaskId}}/reopen"
+      - delete:
+          url: "/tasks/{{TaskId}}"
